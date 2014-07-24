@@ -131,6 +131,12 @@ void free_pcaps(pcap_pkts *pkts)
     free(pkts);
 }
 
+int parse_dtmf_play_args(const char* buffer, pcap_pkts* pkts, u_int16_t start_seq_no)
+{
+    pkts->file = strdup(buffer);
+    return prepare_dtmf(pkts->file, pkts, start_seq_no);
+}
+
 void hexdump(char *p, int s)
 {
     int i;
@@ -151,8 +157,20 @@ void send_packets_cleanup(void *arg)
     close(*sock);
 }
 
-int send_packets (play_args_t * play_args)
+void send_packets_pcap_cleanup(void* arg)
 {
+    play_args_t* play_args = arg;
+
+    if (play_args->free_pcap_when_done) {
+        free(play_args->pcap);
+        play_args->pcap = NULL;
+    }
+}
+
+int send_packets(play_args_t * play_args)
+{
+    pthread_cleanup_push(send_packets_pcap_cleanup, ((void*)play_args));
+
     int ret, sock, port_diff;
     pcap_pkt *pkt_index, *pkt_max;
     uint16_t *from_port, *to_port;
@@ -304,6 +322,7 @@ int send_packets (play_args_t * play_args)
     }
 
     /* Closing the socket is handled by pthread_cleanup_push()/pthread_cleanup_pop() */
+    pthread_cleanup_pop(1);
     pthread_cleanup_pop(1);
     return 0;
 }

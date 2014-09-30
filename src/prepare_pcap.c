@@ -249,7 +249,7 @@ void fill_default_dtmf(struct dtmfpacket * dtmfpacket, int marker, int seqno, in
   dtmfpacket->rtp.extension = 0;
   dtmfpacket->rtp.csicnt = 0;
   dtmfpacket->rtp.marker = marker;
-  dtmfpacket->rtp.payload_type = 0x60;
+  dtmfpacket->rtp.payload_type = 0x65;
   dtmfpacket->rtp.seqno = htons(seqno);
   dtmfpacket->rtp.timestamp = htonl(ts);
   dtmfpacket->rtp.ssrcid = dtmf_ssrcid;

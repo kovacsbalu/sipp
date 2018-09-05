@@ -101,9 +101,11 @@ static char* find_file(const char* filename)
 
     if (access(fullpath, R_OK) < 0) {
         free(fullpath);
+        /*
         WARNING("SIPp now prefers looking for pcap files next to the scenario. "
                 "%s couldn't be found next to the scenario, falling back to "
                 "using the current working directory", filename);
+        */
         return strdup(filename);
     }
 
